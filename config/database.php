@@ -37,8 +37,9 @@ return [
 
         'mongodb' => [
             'driver' => 'mongodb',
-            'dsn' => env('DB_URI', 'mongodb://127.0.0.1:27017'),
+            'dsn' => env('DB_URI', 'mongodb+srv://hashansooriyage:BlPLf8wjevxWxjBT@laravel.x8azomm.mongodb.net/'),
             'database' => 'flutterAuthenticate',
+
         ],
 
         'sqlite' => [
