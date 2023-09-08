@@ -75,13 +75,13 @@ class AuthController extends Controller
             //!if password is correct
             if(Hash::check($request->password, $user->password)){
                 //!Create access Token
-                $accessToken = $user->createToken('Personal Access Token')->accessToken;
+               // $accessToken = $user->createToken('Personal Access Token')->accessToken;
 
                 //!Return response with user data
                 return response()->json([
                     'status' => 'success',
                     'user' => $user,
-                    'access_token' => $accessToken
+                    //'access_token' => $accessToken
                 ], 200);
             }else{
                 //!if password is incorrect
