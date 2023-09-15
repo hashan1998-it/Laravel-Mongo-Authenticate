@@ -44,7 +44,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($email)
+    public function show(String $email)
     {
         $user = User::where('email', $email)->first();
         return response()->json([
