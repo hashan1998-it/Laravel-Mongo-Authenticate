@@ -19,6 +19,15 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('profile_image')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('address')->nullable();
+            $table->string('city', 50)->nullable();
+            $table->string('state', 50)->nullable();
+            $table->string('country', 50)->nullable();
+            $table->string('pincode', 10)->nullable();
+            $table->string('status', 10)->nullable();
+            $table->string('role', 10)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

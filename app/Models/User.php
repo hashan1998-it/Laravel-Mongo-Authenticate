@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
@@ -23,7 +24,7 @@ class User extends \Jenssegers\Mongodb\Eloquent\Model implements
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'profile_image', 'phone', 'address', 'city', 'state', 'country', 'pincode', 'status', 'role',
     ];
 
     /**
@@ -34,5 +35,4 @@ class User extends \Jenssegers\Mongodb\Eloquent\Model implements
     protected $hidden = [
         'password', 'remember_token',
     ];
-
 }
