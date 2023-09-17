@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\File as HttpFile;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Backtrace\File;
 
 class UserController extends Controller
 {
@@ -114,8 +116,8 @@ class UserController extends Controller
     {
         try {
             $user = User::where('email', $request->email)->get()->first();
-            $profile_image = Storage::disk('profile-images')->get($user->profile_image);
-            return response(base64_encode($profile_image), 200);
+            $path = storage_path('app/public/profile-images/' . $user->profile_image);
+            return response()->file($path);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
