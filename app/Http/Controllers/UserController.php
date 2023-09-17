@@ -115,9 +115,9 @@ class UserController extends Controller
     public static function showProfileImage(Request $request)
     {
         try {
-            $user = User::where('email', $request->email)->get()->first();
+            $user = User::where('email', $request->email)->first();
             $path = storage_path('app/public/' . $user->profile_image);
-            if (!file_exists($path)) {
+            if (file_exists($path)) {
                 return response()->file($path);
             }
         } catch (\Exception $e) {
