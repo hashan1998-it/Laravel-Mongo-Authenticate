@@ -25,7 +25,7 @@ Route::get('/user/{email}', [UserController::class, 'show']);
 
 Route::post('/user/profile/image/update', [UserController::class, 'uploadProfileImage']);
 
-Route::get('/user/profile/image/show', [UserController::class, 'showProfileImage']);
+Route::post('/user/profile/image/show', [UserController::class, 'showProfileImage']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
