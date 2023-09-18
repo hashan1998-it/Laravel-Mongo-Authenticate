@@ -98,7 +98,7 @@ class UserController extends Controller
 
         try {
             $imageName = time() . '.' . $request->image->extension();
-            Storage::disk('public')->put($imageName, file_get_contents($request->image));
+            $request->image->storeAs('public/profile-images', $imageName);
             User::where('email', $request->email)->update(['profile_image' => $imageName]);
             return response()->json([
                 'status' => 'success',
@@ -116,9 +116,15 @@ class UserController extends Controller
     {
         try {
             $user = User::where('email', $request->email)->first();
-            $path = storage_path('storage/app/public/' . $user->profile_image);
+            $path = storage_path('app/public/profile-images/' . $user->profile_image);
             if (file_exists($path)) {
                 return response()->file($path);
+            }
+            else{
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'File not found'
+                ], 400);
             }
         } catch (\Exception $e) {
             return response()->json([
