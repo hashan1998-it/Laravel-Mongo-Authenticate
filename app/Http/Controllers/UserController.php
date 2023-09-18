@@ -116,7 +116,7 @@ class UserController extends Controller
     {
         try {
             $user = User::where('email', $request->email)->first();
-            $path = storage_path('app/public/profile-images/' . $user->profile_image);
+            $path = storage_path('storage/app/public/profile-images/' . $user->profile_image);
             if (file_exists($path)) {
                 return response()->file($path);
             }
