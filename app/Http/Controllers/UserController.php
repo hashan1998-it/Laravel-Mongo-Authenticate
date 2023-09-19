@@ -107,6 +107,7 @@ class UserController extends Controller
 
             //Else return file not found
             else {
+                dd($path);
                 return response()->json([
                     'status' => 'error',
                     'message' => 'File not found'
