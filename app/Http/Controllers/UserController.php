@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
+
 class UserController extends Controller
 {
     /**
@@ -88,36 +89,24 @@ class UserController extends Controller
         //
     }
 
-    public static function uploadProfileImage(Request $request)
-    {
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg',
-        ]);
 
-        try {
-            $imageName = time() . '.' . $request->image->extension();
-            Storage::disk('do')->put('uploads', $request->file('image'), 'public');
-            User::where('email', $request->email)->update(['profile_image' => $imageName]);
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Profile image uploaded successfully'
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 400);
-        }
-    }
 
     public static function showProfileImage(Request $request)
     {
         try {
+            //Find the user with the email from the request
             $user = User::where('email', $request->email)->first();
-            $path = storage_path('/app/public/profile-images/' . $user->profile_image);
+
+            //Check if the user has a profile image path
+            $path = public_path("profile-images" ."\\".$user->profile_image);
+
+            //If the path exists, return the image
             if (file_exists($path)) {
                 return response()->file($path);
-            } else {
+            }
+
+            //Else return file not found
+            else {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'File not found'
@@ -131,25 +120,36 @@ class UserController extends Controller
         }
     }
 
-    public static function storeImage(Request $request)
+    public static function uploadProfileImage(Request $request)
     {
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg',
-        ]);
 
         try {
+            //Validate the image request
+            $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg',
+            ]);
+
+            //Create a unique name for the image
             $imageName = time() . '.' . $request->image->extension();
-            request()->file('image')->storeAs($imageName,'do');
+
+            //Store the image in the public folder
+            $request->image->move(public_path('profile-images'), $imageName);
+
+            //Update the profile_image column with the image name
+            $user = User::where('email', $request->email)->first();
+            $user->profile_image = $imageName;
+            $user->save();
+
+            //Return success response with image name
             return response()->json([
                 'status' => 'success',
-                'message' => 'Image uploaded successfully',
                 'image' => $imageName
             ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 400);
+
+
+        } catch (\Throwable $th) {
+            //If error occurs, return the error message
+            return $th->getMessage();
         }
     }
 }
