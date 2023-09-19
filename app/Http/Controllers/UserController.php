@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Http\File as HttpFile;
 use Illuminate\Support\Facades\Storage;
-use Spatie\Backtrace\File;
 
 class UserController extends Controller
 {
@@ -98,7 +96,7 @@ class UserController extends Controller
 
         try {
             $imageName = time() . '.' . $request->image->extension();
-            $request->image->storeAs('public/profile-images', $imageName);
+            Storage::disk('do')->put('uploads', $request->file('image'), 'public');
             User::where('email', $request->email)->update(['profile_image' => $imageName]);
             return response()->json([
                 'status' => 'success',
@@ -119,13 +117,34 @@ class UserController extends Controller
             $path = storage_path('/app/public/profile-images/' . $user->profile_image);
             if (file_exists($path)) {
                 return response()->file($path);
-            }
-            else{
+            } else {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'File not found'
                 ], 400);
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    public static function storeImage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg',
+        ]);
+
+        try {
+            $imageName = time() . '.' . $request->image->extension();
+            request()->file('image')->storeAs($imageName,'do');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Image uploaded successfully',
+                'image' => $imageName
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
