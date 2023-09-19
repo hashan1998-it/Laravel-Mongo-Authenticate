@@ -98,7 +98,7 @@ class UserController extends Controller
             $user = User::where('email', $request->email)->first();
 
             //Check if the user has a profile image path
-            $path = public_path("profile-images" ."\\".$user->profile_image);
+            $path = public_path("profile-images")."\\". $user->profile_image;
 
             //If the path exists, return the image
             if (file_exists($path)) {
