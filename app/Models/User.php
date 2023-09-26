@@ -35,4 +35,6 @@ class User extends \Jenssegers\Mongodb\Eloquent\Model implements
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    
 }

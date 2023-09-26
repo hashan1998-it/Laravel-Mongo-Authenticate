@@ -194,5 +194,6 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // ...
     ])->toArray(),
+    'DigitalOcean' => GrahamCampbell\DigitalOcean\Facades\DigitalOcean::class,
 
 ];

@@ -5,10 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+
+
+
 
 
 class UserController extends Controller
 {
+    /////////////////////////////////////////////////////
     /**
      * Display a listing of the resource.
      *
@@ -16,30 +21,14 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $users = User::all();
+        return response([
+            'status' => 'success',
+            'users' => $users
+        ], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
+    ////////////////////////////////////////////////////////////////
     /**
      * Display the specified resource.
      *
@@ -55,16 +44,8 @@ class UserController extends Controller
         ], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+
+    ///////////////////////////////////////////////////////
 
     /**
      * Update the specified resource in storage.
@@ -73,10 +54,74 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+
+
+    //Update user profile details
+    public function update(Request $request)
     {
-        //
+        try {
+            $user = User::where('email', $request->email)->first();
+
+            $validator = Validator::make($request->all(), [
+                'name' => 'string',
+                'password' => 'string|min:6',
+                'phone' => 'string',
+                'address' => 'string',
+                'city' => 'string',
+                'state' => 'string',
+                'country' => 'string',
+                'pincode' => 'string',
+                'status' => 'string',
+                'role' => 'string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 400);
+            }
+
+            if ($request->has('name')) {
+                $user->name = $request->name;
+            }
+            if ($request->has('password')) {
+                $user->password = $request->password;
+            }
+            if ($request->has('phone')) {
+                $user->phone = $request->phone;
+            }
+            if ($request->has('address')) {
+                $user->address = $request->address;
+            }
+            if ($request->has('city')) {
+                $user->city = $request->city;
+            }
+            if ($request->has('state')) {
+                $user->state = $request->state;
+            }
+            if ($request->has('country')) {
+                $user->country = $request->country;
+            }
+            if ($request->has('pincode')) {
+                $user->pincode = $request->pincode;
+            }
+            if ($request->has('status')) {
+                $user->status = $request->status;
+            }
+            if ($request->has('role')) {
+                $user->role = $request->role;
+            }
+            $user->save();
+
+            return response()->json($user, 200);
+            //code...
+        } catch (\Exception $th) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $th->getMessage()
+            ], 400);
+        }
     }
+
+    ///////////////////////////////////////////////////////////////////////
 
     /**
      * Remove the specified resource from storage.
@@ -84,10 +129,21 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($request)
     {
-        //
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        $user->delete();
+
+        return response()->json(['message' => 'User deleted successfully'], 204);
     }
+
+
+    ///////////////////////////////////////////////////////////
 
 
 
@@ -97,22 +153,10 @@ class UserController extends Controller
             //Find the user with the email from the request
             $user = User::where('email', $request->email)->first();
 
-            //Check if the user has a profile image path
-            $path = public_path("profile-images")."/". $user->profile_image;
-
-            //If the path exists, return the image
-            if (file_exists($path)) {
-                return response()->file($path);
-            }
-
-            //Else return file not found
-            else {
-                dd($path);
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'File not found'
-                ], 400);
-            }
+            return response()->json([
+                'status' => 'success',
+                'image' => $user->profile_image
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -121,9 +165,12 @@ class UserController extends Controller
         }
     }
 
+
+
+
+
     public static function uploadProfileImage(Request $request)
     {
-
         try {
             //Validate the image request
             $request->validate([
@@ -133,12 +180,10 @@ class UserController extends Controller
             //Create a unique name for the image
             $imageName = time() . '.' . $request->image->extension();
 
-            //Store the image in the public folder
-            $request->image->move(public_path('profile-images'), $imageName);
 
             //Update the profile_image column with the image name
             $user = User::where('email', $request->email)->first();
-            $user->profile_image = $imageName;
+            $user->profile_image = $request->image;
             $user->save();
 
             //Return success response with image name
@@ -146,11 +191,12 @@ class UserController extends Controller
                 'status' => 'success',
                 'image' => $imageName
             ], 200);
-
-
-        } catch (\Throwable $th) {
+        } catch (\Exception $th) {
             //If error occurs, return the error message
-            return $th->getMessage();
+            return response()->json([
+                'status' => 'error',
+                'message' => $th->getMessage()
+            ], 400);
         }
     }
 }
