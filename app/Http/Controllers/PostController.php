@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\User;
 
 class PostController extends Controller
 {
@@ -31,16 +32,25 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return response([
+                'status' => 'error',
+                'message' => 'User not found'
+            ], 404);
+        }
+        $author = $user->name;
         $post = Post::create([
-            'title' => $request->title,
+            'author' => $author,
             'content' => $request->content,
-            'email' => $request->email,
             'images' => $request->images,
+            'likes' => 0,
+            'comments' => 0,
         ]);
         return response([
             'status' => 'success',
@@ -137,5 +147,23 @@ class PostController extends Controller
             'message' => 'Post deleted successfully'
         ], 200);
 
+    }
+
+    public function addLikes(Request $request)
+    {
+        $post = Post::where('_id', $request->id)->first();
+        if (!$post) {
+            return response([
+                'status' => 'error',
+                'message' => 'Post not found'
+            ], 404);
+        }
+        $post->update([
+            'likes' => $post->likes + 1,
+        ]);
+        return response([
+            'status' => 'success',
+            'post' => $post
+        ], 200);
     }
 }

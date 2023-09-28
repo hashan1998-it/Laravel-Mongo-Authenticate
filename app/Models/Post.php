@@ -10,6 +10,6 @@ class Post extends \Jenssegers\Mongodb\Eloquent\Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'content', 'email', 'images'
+        'title', 'content', 'email', 'images', 'author', 'likes', 'comments'
     ];
 }
