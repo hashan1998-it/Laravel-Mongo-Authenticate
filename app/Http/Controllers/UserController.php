@@ -111,6 +111,12 @@ class UserController extends Controller
             if ($request->has('role')) {
                 $user->role = $request->role;
             }
+            if ($request->has('dob')) {
+                $user->dob = $request->dob;
+            }
+            if ($request->has('bio')) {
+                $user->bio = $request->bio;
+            }
             $user->save();
 
             return response()->json($user, 200);
