@@ -24,7 +24,7 @@ class User extends \Jenssegers\Mongodb\Eloquent\Model implements
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'profile_image', 'phone', 'address', 'city', 'state', 'country', 'pincode', 'status', 'role',
+        'name', 'email', 'password', 'profile_image', 'phone', 'address', 'city', 'state', 'country', 'pincode', 'status', 'role','dob','bio'
     ];
 
     /**
@@ -36,5 +36,5 @@ class User extends \Jenssegers\Mongodb\Eloquent\Model implements
         'password', 'remember_token',
     ];
 
-    
+
 }

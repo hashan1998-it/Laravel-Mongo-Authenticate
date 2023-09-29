@@ -34,6 +34,8 @@ Route::post('/user/profile/image/update', [UserController::class, 'uploadProfile
 Route::post('/user/profile/image/show', [UserController::class, 'showProfileImage']);
 
 
+
+
 //Post Routes
 Route::get('/posts', [PostController::class, 'index']);
 

@@ -73,6 +73,8 @@ class UserController extends Controller
                 'pincode' => 'string',
                 'status' => 'string',
                 'role' => 'string',
+                'dob'=>'date',
+                'bio'=> 'string'
             ]);
 
             if ($validator->fails()) {
