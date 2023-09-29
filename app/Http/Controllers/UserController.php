@@ -64,17 +64,17 @@ class UserController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'name' => 'string',
-                'password' => 'string|min:6',
-                'phone' => 'string',
-                'address' => 'string',
-                'city' => 'string',
-                'state' => 'string',
-                'country' => 'string',
-                'pincode' => 'string',
-                'status' => 'string',
-                'role' => 'string',
-                'dob'=>'date',
-                'bio'=> 'string'
+                'password' => 'string|min:6|nullable',
+                'phone' => 'string|nullable',
+                'address' => 'string|nullable',
+                'city' => 'string|nullable',
+                'state' => 'string|nullable',
+                'country' => 'string|nullable',
+                'pincode' => 'string|nullable',
+                'status' => 'string|nullable',
+                'role' => 'string|nullable',
+                'dob'=>'date|nullable',
+                'bio'=> 'string|nullable'
             ]);
 
             if ($validator->fails()) {
